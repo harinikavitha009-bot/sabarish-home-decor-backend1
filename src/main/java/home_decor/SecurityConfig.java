@@ -23,10 +23,8 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
-                .requestMatchers(HttpMethod.OPTIONS, "/api/contact").permitAll()
-                .anyRequest().authenticated()
-            );
+        .anyRequest().permitAll()
+);
 
         return http.build();
     }
