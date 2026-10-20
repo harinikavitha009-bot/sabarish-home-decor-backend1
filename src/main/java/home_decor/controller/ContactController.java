@@ -3,6 +3,7 @@ package home_decor.controller;
 import home_decor.model.Contact;
 import home_decor.repository.ContactRepository;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/contact")
@@ -18,5 +19,10 @@ public class ContactController {
     @PostMapping
     public Contact saveContact(@RequestBody Contact contact) {
         return contactRepository.save(contact);
+    }
+
+    @GetMapping
+    public List<Contact> getAllContacts() {
+        return contactRepository.findAll();
     }
 }
