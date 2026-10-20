@@ -9,5 +9,10 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  security:
+    user:
+      name: ${ADMIN_USERNAME:admin}
+      password: ${ADMIN_PASSWORD}
+
 server:
   port: 8081
