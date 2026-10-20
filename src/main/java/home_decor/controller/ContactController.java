@@ -25,4 +25,19 @@ public class ContactController {
     public List<Contact> getAllContacts() {
         return contactRepository.findAll();
     }
+
+    @DeleteMapping("/{id}")
+public String deleteContact(@PathVariable Long id) {
+
+    if (!contactRepository.existsById(id)) {
+        throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.NOT_FOUND,
+                "Enquiry not found"
+        );
+    }
+
+    contactRepository.deleteById(id);
+
+    return "Enquiry deleted successfully";
+}
 }

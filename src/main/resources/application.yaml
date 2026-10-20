@@ -1,8 +1,9 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/home_decor_db}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -12,7 +13,7 @@ spring:
   security:
     user:
       name: ${ADMIN_USERNAME:admin}
-      password: ${ADMIN_PASSWORD}
+      password: ${ADMIN_PASSWORD:LocalTestPass123!}
 
 server:
   port: 8081

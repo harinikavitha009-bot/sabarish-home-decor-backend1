@@ -24,12 +24,25 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .httpBasic(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
-                .requestMatchers("/api/contact/**").permitAll()
-                .requestMatchers("/api/admin/check").authenticated()
-                .anyRequest().authenticated()
-            );
+    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+    // Public website can display projects
+    .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
+
+    // Public customers can submit enquiries
+    .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
+
+    // Admin authentication required to view enquiries
+    .requestMatchers(HttpMethod.GET, "/api/contact").authenticated()
+
+    // Admin authentication required to delete enquiries
+    .requestMatchers(HttpMethod.DELETE, "/api/contact/**").authenticated()
+
+    // Admin login check
+    .requestMatchers("/api/admin/check").authenticated()
+
+    .anyRequest().authenticated()
+);
 
         return http.build();
     }
