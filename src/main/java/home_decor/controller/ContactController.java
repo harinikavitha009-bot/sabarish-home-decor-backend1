@@ -2,7 +2,12 @@ package home_decor.controller;
 
 import home_decor.model.Contact;
 import home_decor.repository.ContactRepository;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -11,14 +16,60 @@ import java.util.List;
 public class ContactController {
 
     private final ContactRepository contactRepository;
+    private final JavaMailSender mailSender;
 
-    public ContactController(ContactRepository contactRepository) {
+    @Value("${app.mail.from}")
+    private String senderEmail;
+
+    @Value("${app.mail.to}")
+    private String receiverEmail;
+
+    public ContactController(
+            ContactRepository contactRepository,
+            JavaMailSender mailSender) {
+
         this.contactRepository = contactRepository;
+        this.mailSender = mailSender;
     }
 
     @PostMapping
     public Contact saveContact(@RequestBody Contact contact) {
-        return contactRepository.save(contact);
+
+        // Save enquiry in the database
+        Contact savedContact = contactRepository.save(contact);
+
+        // Send email notification
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(senderEmail);
+            message.setTo(receiverEmail);
+
+            message.setSubject(
+                    "New Website Enquiry - Sabarish Home Decor"
+            );
+
+            message.setText(
+                    "You have received a new enquiry from your website.\n\n"
+                    + "Name: " + contact.getName() + "\n"
+                    + "Email: " + contact.getEmail() + "\n"
+                    + "Phone: " + contact.getPhone() + "\n"
+                    + "Service: " + contact.getService() + "\n"
+                    + "Message: " + contact.getMessage()
+            );
+
+            mailSender.send(message);
+
+            System.out.println("Enquiry notification email sent.");
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "Email notification failed: " + e.getMessage()
+            );
+        }
+
+        return savedContact;
     }
 
     @GetMapping
@@ -27,17 +78,17 @@ public class ContactController {
     }
 
     @DeleteMapping("/{id}")
-public String deleteContact(@PathVariable Long id) {
+    public String deleteContact(@PathVariable Long id) {
 
-    if (!contactRepository.existsById(id)) {
-        throw new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.NOT_FOUND,
-                "Enquiry not found"
-        );
+        if (!contactRepository.existsById(id)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND,
+                    "Enquiry not found"
+            );
+        }
+
+        contactRepository.deleteById(id);
+
+        return "Enquiry deleted successfully";
     }
-
-    contactRepository.deleteById(id);
-
-    return "Enquiry deleted successfully";
-}
 }

@@ -15,5 +15,22 @@ spring:
       name: ${ADMIN_USERNAME:admin}
       password: ${ADMIN_PASSWORD:LocalTestPass123!}
 
+  mail:
+    host: ${SMTP_HOST:smtp-relay.brevo.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASS}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 server:
-  port: 8081
+  port: ${PORT:8081}
+
+app:
+  mail:
+    from: ${SMTP_FROM}
+    to: ${SMTP_TO}
