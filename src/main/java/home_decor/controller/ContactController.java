@@ -27,7 +27,6 @@ public class ContactController {
     public ContactController(
             ContactRepository contactRepository,
             JavaMailSender mailSender) {
-
         this.contactRepository = contactRepository;
         this.mailSender = mailSender;
     }
@@ -35,37 +34,29 @@ public class ContactController {
     @PostMapping
     public Contact saveContact(@RequestBody Contact contact) {
 
-        // Save enquiry in the database
         Contact savedContact = contactRepository.save(contact);
 
-        // Send email notification
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
+            SimpleMailMessage mail = new SimpleMailMessage();
+            mail.setFrom(senderEmail);
+            mail.setTo(receiverEmail);
+            mail.setSubject("New Website Enquiry - Sabarish Home Decor");
 
-            message.setFrom(senderEmail);
-            message.setTo(receiverEmail);
-
-            message.setSubject(
-                    "New Website Enquiry - Sabarish Home Decor"
+            mail.setText(
+                "New enquiry received!\n\n" +
+                "Name: " + contact.getName() + "\n" +
+                "Email: " + contact.getEmail() + "\n" +
+                "Phone: " + contact.getPhone() + "\n" +
+                "Service: " + contact.getService() + "\n" +
+                "Message: " + contact.getMessage()
             );
 
-            message.setText(
-                    "You have received a new enquiry from your website.\n\n"
-                    + "Name: " + contact.getName() + "\n"
-                    + "Email: " + contact.getEmail() + "\n"
-                    + "Phone: " + contact.getPhone() + "\n"
-                    + "Service: " + contact.getService() + "\n"
-                    + "Message: " + contact.getMessage()
-            );
-
-            mailSender.send(message);
-
+            mailSender.send(mail);
             System.out.println("Enquiry notification email sent.");
 
         } catch (Exception e) {
-
             System.err.println(
-                    "Email notification failed: " + e.getMessage()
+                "Email notification failed: " + e.getMessage()
             );
         }
 
@@ -82,13 +73,12 @@ public class ContactController {
 
         if (!contactRepository.existsById(id)) {
             throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.NOT_FOUND,
-                    "Enquiry not found"
+                org.springframework.http.HttpStatus.NOT_FOUND,
+                "Enquiry not found"
             );
         }
 
         contactRepository.deleteById(id);
-
         return "Enquiry deleted successfully";
     }
 }
