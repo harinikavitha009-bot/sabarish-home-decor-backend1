@@ -54,6 +54,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
             "https://sabarishhome-decor.netlify.app",
+            "https://sabarish-home-decor.vercel.app",
             "http://127.0.0.1:5500",
             "http://localhost:5500"
         ));
